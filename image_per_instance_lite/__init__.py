@@ -4,11 +4,13 @@ Geometry Nodes instance) its own image through ONE material and a per-object ind
 import math
 import os
 import random
+import re
 import tomllib
 
 import bpy
 import numpy as np
-from bpy.props import BoolProperty, EnumProperty, IntProperty, PointerProperty, StringProperty
+from bpy.props import (BoolProperty, CollectionProperty, EnumProperty, FloatProperty, FloatVectorProperty, IntProperty,
+                       PointerProperty, StringProperty)
 from bpy.types import Operator, Panel, PropertyGroup
 
 def _version():
@@ -27,6 +29,9 @@ ATTR = "img_index"
 EXT = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp", ".exr", ".tga")
 MAX_ATLAS = 16384
 MAX_IMAGES = 20
+ATLAS_ALPHA = False
+
+
 
 
 
@@ -37,13 +42,18 @@ class IPIL_Props(PropertyGroup):
     pad: IntProperty(name="Padding", description="Edge padding in pixels, hides bleeding between tiles", default=4, min=0, max=32)
     order: EnumProperty(name="Order", items=[("NAME", "By file name", "")], default="NAME")
     seed: IntProperty(name="Seed", default=1)
-    count: IntProperty(name="Images", default=0, options={"SKIP_SAVE"})
+    count: IntProperty(name="Images", default=0)
     cols: IntProperty(default=1)
     rows: IntProperty(default=1)
 
 
 def _p(context):
     return context.scene.ipi_lite
+
+
+def _natural(name):
+    """Sort key: img2 before img10."""
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", name.lower())]
 
 
 def _list_images(folder):
@@ -53,21 +63,75 @@ def _list_images(folder):
     folder = os.path.normpath(bpy.path.abspath(folder))
     if not os.path.isdir(folder):
         return []
-    return [os.path.join(folder, f) for f in sorted(os.listdir(folder)) if f.lower().endswith(EXT)]
+    return [os.path.join(folder, f) for f in sorted(os.listdir(folder), key=_natural) if f.lower().endswith(EXT)]
 
 
-def _load_tile(path, size, pad):
-    """Load an image file as a size x size RGBA float array (resampled, stretched to square)."""
+def _pixels(im, w, h, linear):
+    """Pixels of a Blender image as an h x w RGBA float array in display (sRGB) values, straight alpha.
+    Float images (16-bit PNG, EXR, HDR) come in linear light with premultiplied alpha and are converted."""
+    buf = np.empty(w * h * 4, np.float32)
+    im.pixels.foreach_get(buf)
+    buf = buf.reshape(h, w, 4)
+    if linear:
+        a = np.clip(buf[..., 3:4], 0.0, 1.0)
+        rgb = np.clip(np.divide(buf[..., :3], a, out=buf[..., :3].copy(), where=a > 1e-6), 0.0, 1.0)
+        buf[..., :3] = np.where(rgb <= 0.0031308, rgb * 12.92, 1.055 * np.power(rgb, 1 / 2.4) - 0.055)
+        buf[..., 3:4] = a
+    return buf
+
+
+def _load_tile(path, w, h, fit="STRETCH", bar=(0.0, 0.0, 0.0, 1.0)):
+    """Load an image file as a w x h RGBA float array (resampled; stretched, fitted with bars or cropped to fill)."""
     im = bpy.data.images.load(path, check_existing=False)
+    crop = None
     try:
-        if im.size[0] == 0 or im.size[1] == 0:
+        iw, ih = im.size
+        if iw == 0 or ih == 0:
             raise ValueError("empty image")
-        im.scale(size, size)
-        buf = np.empty(size * size * 4, np.float32)
-        im.pixels.foreach_get(buf)
-        return buf.reshape(size, size, 4)
+        linear = im.is_float
+        if fit == "STRETCH":
+            tw, th = w, h
+        else:
+            k = min(w / iw, h / ih) if fit == "FIT" else max(w / iw, h / ih)
+            tw, th = max(1, round(iw * k)), max(1, round(ih * k))
+        if tw * th > 16 * w * h:  # very long strip that must fill the tile: crop first, the scaled copy would be huge
+            cw, ch = max(1, min(iw, round(ih * w / h))), max(1, min(ih, round(iw * h / w)))
+            y0, x0 = (ih - ch) // 2, (iw - cw) // 2
+            part = np.ascontiguousarray(_pixels(im, iw, ih, linear)[y0:y0 + ch, x0:x0 + cw])
+            crop = bpy.data.images.new("IPI_crop", cw, ch, alpha=True)
+            crop.pixels.foreach_set(part.ravel())
+            crop.scale(w, h)
+            return _pixels(crop, w, h, False)
+        im.scale(tw, th)
+        buf = _pixels(im, tw, th, linear)
+        if (tw, th) == (w, h):
+            return buf
+        out = np.empty((h, w, 4), np.float32)
+        out[:] = bar
+        if fit == "FIT":
+            y0, x0 = (h - th) // 2, (w - tw) // 2
+            out[y0:y0 + th, x0:x0 + tw] = buf
+        else:
+            y0, x0 = (th - h) // 2, (tw - w) // 2
+            out[:] = buf[y0:y0 + h, x0:x0 + w]
+        return out
     finally:
         bpy.data.images.remove(im)
+        if crop:
+            bpy.data.images.remove(crop)
+
+
+def _set_index(ob, i):
+    """Store the image index on the object and tell Blender to redraw it (a plain property write does not)."""
+    ob[ATTR] = float(i)
+    ob.update_tag()
+
+
+def _redraw(context):
+    """Redraw every 3D view now, not on the next mouse move."""
+    for area in (context.screen.areas if context.screen else ()):
+        if area.type == "VIEW_3D":
+            area.tag_redraw()
 
 
 def _put_material(ob, mat):
@@ -79,7 +143,7 @@ def _put_material(ob, mat):
         mats.append(mat)
 
 
-def _build_material(cols, rows, atlas, size, pad):
+def _build_material(cols, rows, atlas, w, h, pad):
     mat = bpy.data.materials.get(MAT) or bpy.data.materials.new(MAT)
     mat.use_nodes = True
     nt = mat.node_tree
@@ -109,10 +173,8 @@ def _build_material(cols, rows, atlas, size, pad):
     col = m("FLOORED_MODULO", b=cols)
     rowf = m("FLOOR")
     rowd = m("DIVIDE", b=cols)
-    k = (size - 2 * pad) / size  # inset so linear filtering never reads the neighbour tile
-    o = pad / size
-    us, uo = m("MULTIPLY", b=k), m("ADD", b=o)
-    vs, vo = m("MULTIPLY", b=k), m("ADD", b=o)
+    us, uo = m("MULTIPLY", b=(w - 2 * pad) / w), m("ADD", b=pad / w)  # inset so linear filtering never reads the neighbour tile
+    vs, vo = m("MULTIPLY", b=(h - 2 * pad) / h), m("ADD", b=pad / h)
     ux = m("ADD")
     ud = m("DIVIDE", b=cols)
     vx = m("ADD")
@@ -142,8 +204,33 @@ def _build_material(cols, rows, atlas, size, pad):
     return mat
 
 
+def _tile_size(p):
+    s = int(p.tile)
+    return s, s
+
+
+def _fit_args(p):
+    return "STRETCH", (0.0, 0.0, 0.0, 1.0)
+
+
+def _store_names(p, files):
+    pass
+
+
+def _cell(p, atlas):
+    """Size of one atlas cell in pixels as it was built (the Tile Size field may have changed since)."""
+    return atlas.size[0] // max(1, p.cols), atlas.size[1] // max(1, p.rows)
+
+
+def _make_material(p, atlas):
+    w, h = _cell(p, atlas)
+    return _build_material(p.cols, p.rows, atlas, w, h, p.pad)
+
+
 def _sock(node, name):
     return next(s for s in node.inputs if s.name == name and s.enabled)
+
+
 
 
 
@@ -165,36 +252,44 @@ class IPIL_OT_build(Operator):
             else:
                 self.report({"ERROR"}, f"No images (png, jpg, tif, exr...) found in: {os.path.normpath(bpy.path.abspath(p.folder))}")
             return {"CANCELLED"}
-        size, pad = int(p.tile), p.pad
+        # the atlas is always in file-name order, so Image Number N is always the N-th file
+        tw, th = _tile_size(p)
+        fit, bar = _fit_args(p)
+        pad = p.pad
         n = len(files)
         if MAX_IMAGES and n > MAX_IMAGES:
             self.report({"ERROR"}, f"This free version supports up to {MAX_IMAGES} images ({n} found)")
             return {"CANCELLED"}
-        cols = max(1, math.ceil(math.sqrt(n)))
+        cols = max(1, math.ceil(math.sqrt(n * th / tw)))
         rows = math.ceil(n / cols)
-        if cols * size > MAX_ATLAS or rows * size > MAX_ATLAS:
-            self.report({"ERROR"}, f"Atlas would be {cols * size}x{rows * size} px (limit {MAX_ATLAS}). Use a smaller tile size or fewer images")
+        W, H = cols * tw, rows * th
+        if W > MAX_ATLAS or H > MAX_ATLAS:
+            self.report({"ERROR"}, f"Atlas would be {W}x{H} px (limit {MAX_ATLAS}). Use a smaller tile size or fewer images")
             return {"CANCELLED"}
-        W, H = cols * size, rows * size
         A = np.zeros((H, W, 4), np.float32)
         A[..., 3] = 1
         for i, f in enumerate(files):
             try:
-                t = _load_tile(f, size, pad)
+                t = _load_tile(f, tw, th, fit, bar)
             except Exception as e:
                 self.report({"WARNING"}, f"Skipped {os.path.basename(f)}: {e}")
                 continue
             r, c = divmod(i, cols)
-            A[r * size:(r + 1) * size, c * size:(c + 1) * size] = t
+            A[r * th:(r + 1) * th, c * tw:(c + 1) * tw] = t
         old = bpy.data.images.get(ATLAS)
         if old:
             bpy.data.images.remove(old)
-        atlas = bpy.data.images.new(ATLAS, W, H, alpha=False)
+        atlas = bpy.data.images.new(ATLAS, W, H, alpha=ATLAS_ALPHA)
         atlas.pixels.foreach_set(A.ravel())
         atlas.pack()
         p.count, p.cols, p.rows = n, cols, rows
-        _build_material(cols, rows, atlas, size, pad)
+        _store_names(p, files)
+        for o in bpy.data.objects:  # fewer images than before: no object may point past the end of the atlas
+            if o.get(ATTR, 0) >= n:
+                _set_index(o, int(o[ATTR]) % n)
+        _make_material(p, atlas)
         self.report({"INFO"}, f"Atlas {W}x{H} px, {n} images")
+        _redraw(context)
         return {"FINISHED"}
 
 
@@ -214,13 +309,16 @@ class IPIL_OT_apply(Operator):
         if not obs:
             self.report({"ERROR"}, "Select mesh objects")
             return {"CANCELLED"}
-        obs.sort(key=lambda o: o.name)
+        obs.sort(key=lambda o: _natural(o.name))
         order = list(range(len(obs)))
         for k, o in zip(order, obs):
-            o[ATTR] = float(k % p.count)
+            _set_index(o, k % p.count)
             _put_material(o, mat)
         self.report({"INFO"}, f"{len(obs)} objects, {p.count} images")
+        _redraw(context)
         return {"FINISHED"}
+
+
 
 
 

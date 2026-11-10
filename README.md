@@ -3,7 +3,7 @@
 **One shared material, a different image on every object.** Pick a folder of images, press two buttons, done.
 No hand-built node setup, no 20 duplicated materials.
 
-> **Get the full version:** Image Per Instance on [Superhive](https://superhivemarket.com/products/image-per-instance) or [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) ($8) removes the 20 image limit and adds **Geometry Nodes instances** (Instance on Points, Array modifier) and **Shuffle**. Lite stays free and complete for what it lists here.
+> **Get the full version:** Image Per Instance on [Superhive](https://superhivemarket.com/products/image-per-instance) or [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) ($8) removes the 20 image limit and adds **Geometry Nodes instances** (Instance on Points, Array modifier), **Shuffle**, fit modes and tile shapes, assigning images by name, alpha and emission, mapping for objects without UVs, animation and random variation. Lite stays free and complete for what it lists here.
 
 ![Before and after: the same image on every frame vs a different image on each frame](docs/before_after.jpg)
 
@@ -30,6 +30,11 @@ Typical uses: posters and paintings on a wall, book covers, cards, tiles, game p
 - Order by file name
 
 Objects need UVs that fill the 0-1 square (a plane or an unwrapped cover). Images are resized to square tiles of one size. The image goes on material slot 1; other slots are not touched. Atlas size is limited to 16384 px per side.
+
+## Changelog
+
+- **0.2.0**: natural file order (`img2` before `img10`), 16-bit and EXR images have the right brightness, the 3D view redraws right after a button press, rebuilding the atlas no longer shifts pictures
+- **0.1.7**: the image goes only on material slot 1
 
 ## Tested
 

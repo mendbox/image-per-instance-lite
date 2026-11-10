@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "image_per_instance_lite"
-version = "0.1.7"
+version = "0.2.0"
 name = "Image Per Instance Lite - Different Texture on Every Object"
 tagline = "Different image on every object, one shared material"
 maintainer = "QuadFix Tools <support@dynamicflower.pt>"
