@@ -103,7 +103,7 @@ Yes. Automated tests pass on Blender 4.2.23, 4.5.14 and 5.2.2: the test renders 
 
 ## License
 
-GPL-3.0-or-later. See [LICENSE](LICENSE). Support: support@dynamicflower.pt
+GPL-3.0-or-later. See [LICENSE](LICENSE). Support: support@mendboxstudio.com
 
 ---
 *Keywords: Blender add-on, Blender extension, different texture on each object, image per object, one material many images, texture atlas, image texture, picture frames, posters, book covers, Geometry Nodes instances, product visualization.*
