@@ -1,5 +1,7 @@
 # Image Per Instance Lite — Blender add-on: a different image texture on every object, one shared material
 
+Website: https://mendboxstudio.com/addons/image-per-instance · Full manual: https://mendboxstudio.com/docs/image-per-instance
+
 [![Blender 4.2+](https://img.shields.io/badge/Blender-4.2%2B-orange)](https://github.com/mendbox/image-per-instance-lite/releases/latest)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/mendbox/image-per-instance-lite)](https://github.com/mendbox/image-per-instance-lite/releases/latest)
