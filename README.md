@@ -1,14 +1,14 @@
 # Image Per Instance Lite — Blender add-on: a different image texture on every object, one shared material
 
-[![Blender 4.2+](https://img.shields.io/badge/Blender-4.2%2B-orange)](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest)
+[![Blender 4.2+](https://img.shields.io/badge/Blender-4.2%2B-orange)](https://github.com/mendbox/image-per-instance-lite/releases/latest)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/quadfix-tools/image-per-instance-lite)](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/mendbox/image-per-instance-lite)](https://github.com/mendbox/image-per-instance-lite/releases/latest)
 
 **Full version — Geometry Nodes instances, fit modes (stretch / fit / fill), glowing screens, animated flipbook, random variation, more images → [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
 
 Image Per Instance Lite is a free, open-source Blender add-on that puts a different image on each object using **one shared material**. Pick a folder of images, press two buttons, done. No hand-built node setup, no 20 duplicated materials. For Blender 4.2 LTS, 4.5 LTS and 5.x.
 
-[Download the latest release](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest) · [Video of the full version on YouTube](https://youtu.be/CLFAlI3Aa5c)
+[Download the latest release](https://github.com/mendbox/image-per-instance-lite/releases/latest) · [Video of the full version on YouTube](https://youtu.be/CLFAlI3Aa5c)
 
 ![Blender Geometry Nodes instances with a different image on each instance, one shared material](docs/media/image-per-instance-instances.gif)
 *A different image on every Geometry Nodes instance, one material (full version). [Get it on Gumroad](https://quadfix.gumroad.com/l/image-per-instance).*
@@ -63,7 +63,7 @@ These need the full version, they are not in Lite.
 
 ## Install (Blender 4.2 and newer)
 
-1. Download the zip from the [Releases](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest) page. **Do not unzip it.**
+1. Download the zip from the [Releases](https://github.com/mendbox/image-per-instance-lite/releases/latest) page. **Do not unzip it.**
 2. In Blender open **Edit > Preferences > Get Extensions**, click the arrow menu at the top right and choose **Install from Disk**, then pick the zip.
 3. In the 3D viewport press **N** and open the **Image Per Instance Lite** tab.
 
