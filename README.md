@@ -4,14 +4,14 @@
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/quadfix-tools/image-per-instance-lite)](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest)
 
-**Full version with Geometry Nodes instances, fit modes, animation and more → [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
+**Full version — Geometry Nodes instances, fit modes (stretch / fit / fill), glowing screens, animated flipbook, random variation, more images → [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
 
 Image Per Instance Lite is a free, open-source Blender add-on that puts a different image on each object using **one shared material**. Pick a folder of images, press two buttons, done. No hand-built node setup, no 20 duplicated materials. For Blender 4.2 LTS, 4.5 LTS and 5.x.
 
 [Download the latest release](https://github.com/quadfix-tools/image-per-instance-lite/releases/latest) · [Video of the full version on YouTube](https://youtu.be/CLFAlI3Aa5c)
 
-![Blender before and after: the same image on every picture frame vs a different image texture on each frame with one material](docs/before_after.jpg)
-*Same scene, same single material. Left: one image everywhere. Right: each frame has its own picture.*
+![Blender Geometry Nodes instances with a different image on each instance, one shared material](docs/media/image-per-instance-instances.gif)
+*A different image on every Geometry Nodes instance, one material (full version). [Get it on Gumroad](https://quadfix.gumroad.com/l/image-per-instance).*
 
 ## What Lite does
 
