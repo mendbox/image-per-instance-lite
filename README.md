@@ -6,14 +6,14 @@ Website: https://mendboxstudio.com/addons/image-per-instance · Full manual: htt
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/mendbox/image-per-instance-lite)](https://github.com/mendbox/image-per-instance-lite/releases/latest)
 
-**Full version — Geometry Nodes instances, fit modes (stretch / fit / fill), glowing screens, animated flipbook, random variation, more images → [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
+**Full version — Geometry Nodes instances, fit modes (stretch / fit / fill), glowing screens, animated flipbook, random variation, more images → [Gumroad](https://mendbox.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
 
 Image Per Instance Lite is a free, open-source Blender add-on that puts a different image on each object using **one shared material**. Pick a folder of images, press two buttons, done. No hand-built node setup, no 20 duplicated materials. For Blender 4.2 LTS, 4.5 LTS and 5.x.
 
 [Download the latest release](https://github.com/mendbox/image-per-instance-lite/releases/latest) · [Video of the full version on YouTube](https://youtu.be/CLFAlI3Aa5c)
 
 ![Blender Geometry Nodes instances with a different image on each instance, one shared material](docs/media/image-per-instance-instances.gif)
-*A different image on every Geometry Nodes instance, one material (full version). [Get it on Gumroad](https://quadfix.gumroad.com/l/image-per-instance).*
+*A different image on every Geometry Nodes instance, one material (full version). [Get it on Gumroad](https://mendbox.gumroad.com/l/image-per-instance).*
 
 ## What Lite does
 
@@ -42,7 +42,7 @@ Typical uses: posters and paintings on a wall, book covers, cards, tiles, game p
 | Animation (flipbook through the images) | no | yes |
 | Random variation (hue, saturation, brightness, flip) | no | yes |
 
-Lite stays free and complete for everything marked "yes". Get the full version on [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) or [Superhive](https://superhivemarket.com/products/image-per-instance).
+Lite stays free and complete for everything marked "yes". Get the full version on [Gumroad](https://mendbox.gumroad.com/l/image-per-instance) or [Superhive](https://superhivemarket.com/products/image-per-instance).
 
 ## Gallery (Full version only)
 
@@ -88,7 +88,7 @@ Use one material and one atlas texture instead of one material per image. The sc
 Give each frame, poster or cover plane its own image from the folder. Objects need UVs that fill the 0-1 square (a plane or an unwrapped cover works).
 
 ### Does it work with Geometry Nodes instances, Instance on Points or the Array modifier?
-Not in Lite. Lite works on separate objects. The full version adds Geometry Nodes instances, Instance on Points and Array support: [Gumroad](https://quadfix.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance).
+Not in Lite. Lite works on separate objects. The full version adds Geometry Nodes instances, Instance on Points and Array support: [Gumroad](https://mendbox.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance).
 
 ### Is there an image limit in the free version?
 Yes, up to 20 images per atlas. The full version has no 20 image limit.
