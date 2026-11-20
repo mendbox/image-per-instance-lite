@@ -94,7 +94,7 @@ Not in Lite. Lite works on separate objects. The full version adds Geometry Node
 Yes, up to 20 images per atlas. The full version has no 20 image limit.
 
 ### Does it work with Blender 5.x?
-Yes. Works on Windows, macOS and Linux (Blender 4.2 LTS and newer). Automated tests pass on Blender 4.2.23, 4.5.14 and 5.2.2 (on macOS and Windows 11): the test renders every tile and checks its colour, checks the 20 image limit and the empty-folder error. No internet, no external files, no binaries.
+Yes. Works on Windows, macOS and Linux (Blender 4.2 LTS and newer). Automated tests pass on Blender 4.2.23, 4.5.14 and 5.2.2 (on macOS, Windows 11 and Linux): the test renders every tile and checks its colour, checks the 20 image limit and the empty-folder error. No internet, no external files, no binaries.
 
 ## Changelog
 
