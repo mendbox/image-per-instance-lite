@@ -8,6 +8,8 @@ Website: https://mendboxstudio.com/addons/image-per-instance · Full manual: htt
 
 **Full version — Geometry Nodes instances, fit modes (stretch / fit / fill), glowing screens, animated flipbook, random variation, more images → [Gumroad](https://mendbox.gumroad.com/l/image-per-instance) | [Superhive](https://superhivemarket.com/products/image-per-instance)**
 
+Also on Blendkit (installs from inside Blender): [Lite](https://www.blendkit.com/asset-gallery-detail/83ecc781-045a-405e-9d98-f4b4664b7671/) | [full version](https://www.blendkit.com/asset-gallery-detail/53cec704-15b9-4601-984e-a192c8842f60/)
+
 Image Per Instance Lite is a free, open-source Blender add-on that puts a different image on each object using **one shared material**. Pick a folder of images, press two buttons, done. No hand-built node setup, no 20 duplicated materials. For Blender 4.2 LTS, 4.5 LTS and 5.x.
 
 [Download the latest release](https://github.com/mendbox/image-per-instance-lite/releases/latest) · [Video of the full version on YouTube](https://youtu.be/CLFAlI3Aa5c)
