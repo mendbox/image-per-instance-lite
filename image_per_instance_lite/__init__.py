@@ -5,6 +5,7 @@ import math
 import os
 import random
 import re
+import textwrap
 import tomllib
 
 import bpy
@@ -29,6 +30,9 @@ ATTR = "img_index"
 EXT = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp", ".exr", ".tga")
 MAX_ATLAS = 16384
 MAX_IMAGES = 20
+FULL_URL = "https://mendbox.gumroad.com/l/image-per-instance"
+FULL_TEXT = ("Full version: unlimited images, Geometry Nodes instances, fit modes, glowing screens, "
+             "flipbooks and random variation.")
 ATLAS_ALPHA = False
 
 
@@ -343,8 +347,11 @@ class IPIL_PT_panel(Panel):
         col.separator()
         col.label(text=f"Atlas: {p.count} images" if p.count else "Atlas: not built")
         col.operator("ipil.apply_objects", icon="OBJECT_DATA")
-        col.separator()
-        col.label(text=f"Image Per Instance Lite v{VERSION}")
+        box = self.layout.box()
+        for n, line in enumerate(textwrap.wrap(FULL_TEXT, max(16, int((context.region.width - 70) / (7.5 * context.preferences.system.ui_scale))))):
+            box.label(text=line, icon="INFO" if n == 0 else "BLANK1")
+        box.operator("wm.url_open", text="Get the full version", icon="URL").url = FULL_URL
+        self.layout.label(text=f"Image Per Instance Lite v{VERSION}")
 
 
 classes = (IPIL_Props, IPIL_OT_build, IPIL_OT_apply, IPIL_PT_panel)
